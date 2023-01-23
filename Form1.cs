@@ -103,9 +103,9 @@ namespace kursaDarbs
             //Image img = pictureBox1.Image;
             //CompressImageFirstMethod(img);
             Bitmap bmp = (Bitmap)pictureBox1.Image.Clone();
-            string codePath = "C:\\Users\\PC\\Desktop\\bitmap.txt";
-            string decodePath = "C:\\Users\\PC\\Desktop\\test.txt";
-            string decodedResultPath = "C:\\Users\\PC\\Desktop\\decoded.txt";
+            string codePath = "C:\\RTU\\3kurss\\Attelu apstrade\\bitmap.txt";
+            string decodePath = "C:\\RTU\\3kurss\\Attelu apstrade\\test.txt";
+            string decodedResultPath = "C:\\RTU\\3kurss\\Attelu apstrade\\decoded.txt";
             SaveImgAsText(bmp, codePath);
             saspiest(codePath);
             decode(decodePath);
@@ -296,18 +296,18 @@ namespace kursaDarbs
                 //System.out.println("Code table:");
 
 
-                // генерируем список листов дерева
+                // generating a list of tree leaves
                 List<CodeTreeNode> codeTreeNodes = new List<CodeTreeNode>();
                 foreach (Char? c in frequencies.Keys)
                 {
                     codeTreeNodes.Add(new CodeTreeNode(c, frequencies[c]));
                 }
 
-                // строим кодовое дерево с помощью алгоритма Хаффмана
+                // building a code tree using the Huffman algorithm
 
                 CodeTreeNode tree = huffman(codeTreeNodes);
 
-                // генерируем таблицу префиксных кодов для кодируемых символов с помощью кодового дерева
+                // generate a table of prefix codes for encoded characters using a code tree
                 Dictionary<Char?, string> codes = new Dictionary<Char?, string>();
                 foreach (Char? c in frequencies.Keys)
                 {
@@ -330,7 +330,7 @@ namespace kursaDarbs
             }
         }
 
-        // загрузка сжатой информации и таблицы частот из файла
+        // loading compressed information and frequency table from a file
         private void loadFromFile(String inputFilePath, Dictionary<Char?, int> frequencies, StringBuilder bits)
         {
             try
@@ -370,27 +370,22 @@ namespace kursaDarbs
                 Dictionary<Char?, int> frequencies2 = new Dictionary<Char?, int>();
                 StringBuilder encoded2 = new StringBuilder();
                 List<CodeTreeNode> codeTreeNodes = new List<CodeTreeNode>();
-                // извлечение сжатой информации из файла
+                // extracting compressed information from a file
                 loadFromFile(filename, frequencies2, encoded2);
 
-                // генерация листов и постоение кодового дерева Хаффмана на основе таблицы частот сжатого файла
+                // tile generation and construction of the Huffman code tree based on the frequency table of the compressed file
                 foreach (Char? c in frequencies2.Keys)
                 {
                     codeTreeNodes.Add(new CodeTreeNode(c, frequencies2[c]));
                 }
                 CodeTreeNode tree2 = huffman(codeTreeNodes);
 
-                // декодирование обратно исходной информации из сжатой
+                // decoding back the original information from the compressed
                 String decoded = huffmanDecode(encoded2.ToString(), tree2);
 
 
-                // сохранение в файл декодированной информации
+                // saving decoded information to file
                 String decompressedtext = "C:\\RTU\\3kurss\\Attelu apstrade\\decoded.txt";
-                //var stream = File.OpenWrite(decompressedtext);
-                //BinaryWriter os = new BinaryWriter(stream);
-                //os.Flush();
-                //os.Write(decoded);
-                //os.Close();
                 File.WriteAllText(decompressedtext, decoded);
             }
             catch (IOException e)
