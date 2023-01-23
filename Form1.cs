@@ -466,33 +466,42 @@ namespace kursaDarbs
         //-----------------------------------------------------------
         // JPG metode
         //-----------------------------------------------------------
+        //-----------------------------------------------------------
+        // Treša metode
+        //-----------------------------------------------------------
+
+        //šī rinda deklarē metodi "CompressImage", kas izmanto divas ievades: attēla objektu un veselu skaitli "kvalitāte". Tas atgriež virkni.
         private string CompressImage(Image Image, int Quality)
-        {
+        {   //: šī rinda izveido jaunu bitkartes objektu no ievades attēla objekta
             using (Bitmap mybitmap = new Bitmap(@Image))
-            {
+            {   //izsauc palīgmetodi "GetEncoder" un kā ievadi tiek nodota Jpeg attēla formātā. Tas piešķir atgriezto kodeku mainīgajam "jpegEncoder".
                 ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
-
-                System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;
-
-                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, Quality);
-                EncoderParameters myEncoderParameters = new EncoderParameters(1);
-                myEncoderParameters.Param[0] = myEncoderParameter;
-                String ResultDirectory = "C:\\RTU\\3kurss\\Attelu apstrade";
                 
-
+                System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;
+                //izveido jaunu EncoderParameter objektu, kas kā ievadi izmanto mainīgo "myEncoder" un "kvalitātes".
+                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, Quality);
+                //izveido jaunu EncoderParameters objektu ar vienu parametru.
+                EncoderParameters myEncoderParameters = new EncoderParameters(1);
+               // šī rinda piešķir iepriekš izveidoto "encoderParameter" objektu pirmajam (un vienīgajam) objekta "encoderParameters" parametram.
+                myEncoderParameters.Param[0] = myEncoderParameter;
+                //direktorijas ceļš
+                String ResultDirectory = "C:\\Users\\PC\\Desktop";
+                
+                //Šajā rindā apvieno rezultātu direktoriju ar saspiestā faila nosaukumu, gala rezultāts ir ceļš, kurā tiks saglabāts saspiestais attēls.
                 string ResultPath = @ResultDirectory + "\\" + Path.GetFileNameWithoutExtension("Compressed") + ".JPEG";
 
                 mybitmap.Save(ResultPath, jpgEncoder, myEncoderParameters);
-
+                //šī rinda atgriež galīgo "resultPath", kurā tiek saglabāts saspiestais attēls.
                 return ResultPath;
             }
         }
-
+        //šī rinda deklarē palīgmetodi "GetEncoder", kas kā ievadi izmanto ImageFormat objektu. Tas atgriež ImageCodecInfo objektu.
         private ImageCodecInfo GetEncoder(ImageFormat format)
-        {
+        {   //rinda izveido ImageCodecInfo objektu masīvu, izsaucot metodi GetImageEncoders.
             ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            //šī rinda sāk cilpu, kas atkārtojas caur katru kodeku "kodeku" masīvā.
             foreach (ImageCodecInfo codec in codecs)
-            {
+            {   //šī rindiņa pārbauda, vai pašreizējā kodeka FormatID ir vienāds ar ievades formāta Guid.
                 if (codec.FormatID == format.Guid)
                 {
                     return codec;
@@ -500,6 +509,7 @@ namespace kursaDarbs
             }
             return null;
         }
+
 
        
 
