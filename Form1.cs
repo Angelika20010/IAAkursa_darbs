@@ -477,7 +477,7 @@ namespace kursaDarbs
                 EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, Quality);
                 EncoderParameters myEncoderParameters = new EncoderParameters(1);
                 myEncoderParameters.Param[0] = myEncoderParameter;
-                String ResultDirectory = "C:\\Users\\PC\\Desktop";
+                String ResultDirectory = "C:\\RTU\\3kurss\\Attelu apstrade";
                 
 
                 string ResultPath = @ResultDirectory + "\\" + Path.GetFileNameWithoutExtension("Compressed") + ".JPEG";
