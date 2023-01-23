@@ -17,12 +17,18 @@ using File = System.IO.File;
 
 namespace kursaDarbs
 {
-    public partial class Form1 : Form
+    public partial class Metodes : Form
     {
         public ImageClass imageClass = new ImageClass();
-        public Form1()
+        public Metodes()
         {
             InitializeComponent();
+            
+            openFileDialog1.Title = "Select an image";
+            openFileDialog1.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
+
+            saveFileDialog1.Title = "Save image";
+            saveFileDialog1.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -53,22 +59,7 @@ namespace kursaDarbs
         }
 
 
-        private void CompressImageFirstMethod(Image sourceImg)
-        {
-
-        }
-        private void CompressImageSecondMethod(Image sourceImg)
-        {
-
-        }
-        private void CompressImageThirdMethod(Image sourceImg)
-        {
-
-        }
-        private void CompressImageFourthMethod(Image sourceImg)
-        {
-
-        }
+        
 
         public static string ByteArrayToDecimalString(byte[] ba)
         {
@@ -107,14 +98,14 @@ namespace kursaDarbs
 
         }
 
-        private void firstMethod_Click(object sender, EventArgs e)
+        private void Huffman_metode_Click(object sender, EventArgs e)
         {
             //Image img = pictureBox1.Image;
             //CompressImageFirstMethod(img);
             Bitmap bmp = (Bitmap)pictureBox1.Image.Clone();
-            string codePath = "C:\\RTU\\3kurss\\Attelu apstrade\\bitmap.txt";
-            string decodePath = "C:\\RTU\\3kurss\\Attelu apstrade\\test.txt";
-            string decodedResultPath = "C:\\RTU\\3kurss\\Attelu apstrade\\decoded.txt";
+            string codePath = "C:\\Users\\PC\\Desktop\\bitmap.txt";
+            string decodePath = "C:\\Users\\PC\\Desktop\\test.txt";
+            string decodedResultPath = "C:\\Users\\PC\\Desktop\\decoded.txt";
             SaveImgAsText(bmp, codePath);
             saspiest(codePath);
             decode(decodePath);
@@ -138,34 +129,69 @@ namespace kursaDarbs
                     index = index + 3; 
                 }
             }
-            pictureBox2.Image = imageClass.DrawImage(decompressedImg);
+            
 
         }
-
-        private void secondMethod_Click(object sender, EventArgs e)
+        
+        private void RLE_COMPRESS_Click(object sender, EventArgs e)
         {
-            Image img = pictureBox1.Image;
-            CompressImageSecondMethod(img);
+            
+
+            Bitmap bmp = (Bitmap)pictureBox1.Image.Clone();
+
+            byte[] compressedImage = RLEEncode(bmp) ;
+
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    File.WriteAllBytes(saveFileDialog1.FileName , compressedImage);
+                }
+            
+
         }
 
-        private void thirdMethod_Click(object sender, EventArgs e)
+        private void rle_decompress_Click(object sender, EventArgs e)
         {
-            Image img = pictureBox1.Image;
-            CompressImageThirdMethod(img);
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                byte[] compressedImage = File.ReadAllBytes(openFileDialog1.FileName);
+
+                Image image = RLEDecode(compressedImage);
+
+                pictureBox1.Image = image;
+
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        image.Save(saveFileDialog1.FileName);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("An error occurred while saving the image: " + ex.Message);
+                    }
+                }
+            }
         }
 
-        private void fourthMethod_Click(object sender, EventArgs e)
+        private void JPG_METODE_Click(object sender, EventArgs e)
         {
-            Image img = pictureBox1.Image;
-            CompressImageFourthMethod(img);
+            
+
+            Bitmap bmp = (Bitmap)pictureBox1.Image.Clone();
+            CompressImage(bmp,70);
+           
         }
+
+       
 
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
 
-        //first method
+        //-----------------------------------------------------------
+        // Huffman metode
+        //-----------------------------------------------------------
         private void saveToFile(String outputFilePath, Dictionary<Char?, int> frequencies, String bits)
         {
             try
@@ -374,5 +400,114 @@ namespace kursaDarbs
 
         }
 
+        //-----------------------------------------------------------
+        // RLE metode
+        //-----------------------------------------------------------
+
+        private byte[] RLEEncode(Image image)
+        {
+            byte[] imageBytes = ImageToByteArray(image);
+
+            List<byte> compressedBytes = new List<byte>();
+            int count = 1;
+            byte currentByte = imageBytes[0];
+
+            for (int i = 1; i < imageBytes.Length; i++)
+            {
+                if (currentByte == imageBytes[i])
+                {
+                    count++;
+                }
+                else
+                {
+                    compressedBytes.Add((byte)count);
+                    compressedBytes.Add(currentByte);
+
+                    count = 1;
+                    currentByte = imageBytes[i];
+                }
+            }
+
+            compressedBytes.Add((byte)count);
+            compressedBytes.Add(currentByte);
+
+            return compressedBytes.ToArray();
+        }
+
+        private Image RLEDecode(byte[] compressedImage)
+        {
+            List<byte> imageBytes = new List<byte>();
+
+            for (int i = 0; i < compressedImage.Length; i += 2)
+            {
+                int count = compressedImage[i];
+                byte currentByte = compressedImage[i + 1];
+
+                for (int j = 0; j < count; j++)
+                {
+                    imageBytes.Add(currentByte);
+                }
+            }
+
+            return ByteArrayToImage(imageBytes.ToArray());
+        }
+
+        private byte[] ImageToByteArray(Image image)
+        {
+            using (var ms = new MemoryStream())
+            {
+                image.Save(ms, image.RawFormat);
+                return ms.ToArray();
+            }
+        }
+        private Image ByteArrayToImage(byte[] byteArray)
+        {
+            using (var ms = new MemoryStream(byteArray))
+            {
+                return Image.FromStream(ms);
+            }
+        }
+
+        //-----------------------------------------------------------
+        // JPG metode
+        //-----------------------------------------------------------
+        private string CompressImage(Image Image, int Quality)
+        {
+            using (Bitmap mybitmap = new Bitmap(@Image))
+            {
+                ImageCodecInfo jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+
+                System.Drawing.Imaging.Encoder myEncoder = System.Drawing.Imaging.Encoder.Quality;
+
+                EncoderParameter myEncoderParameter = new EncoderParameter(myEncoder, Quality);
+                EncoderParameters myEncoderParameters = new EncoderParameters(1);
+                myEncoderParameters.Param[0] = myEncoderParameter;
+                String ResultDirectory = "C:\\Users\\PC\\Desktop";
+                
+
+                string ResultPath = @ResultDirectory + "\\" + Path.GetFileNameWithoutExtension("Compressed") + ".JPEG";
+
+                mybitmap.Save(ResultPath, jpgEncoder, myEncoderParameters);
+
+                return ResultPath;
+            }
+        }
+
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
+        }
+
+       
+
+        
     }
 }
