@@ -485,7 +485,7 @@ namespace kursaDarbs
                // šī rinda piešķir iepriekš izveidoto "encoderParameter" objektu pirmajam (un vienīgajam) objekta "encoderParameters" parametram.
                 myEncoderParameters.Param[0] = myEncoderParameter;
                 //direktorijas ceļš
-                String ResultDirectory = "C:\\Users\\PC\\Desktop";
+                String ResultDirectory = "C:\\RTU\\3kurss\\Attelu apstrade\\";
                 
                 //Šajā rindā apvieno rezultātu direktoriju ar saspiestā faila nosaukumu, gala rezultāts ir ceļš, kurā tiks saglabāts saspiestais attēls.
                 string ResultPath = @ResultDirectory + "\\" + Path.GetFileNameWithoutExtension("Compressed") + ".JPEG";
